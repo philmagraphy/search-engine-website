@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+
+<!--code modified from https://www.w3schools.com/howto/howto_js_topnav_responsive.asp-->
+
+<html>
+<head>
+	<title> Phillip Ma - CS355 Homepage </title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="styles.css" type="text/css">
+</head>
+
+<body>
+
+ <div class="topnav" id="myTopnav">
+  <a href="index.html" class="active">Home</a>
+    <div class="dropdown">
+    <button class="dropbtn">Course
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+			<a href="https://learn.zybooks.com/zybook/CUNYCSCI355TeitelmanFall2019">Zybook</a>
+			<a href="https://app.tophat.com/e/817742/lecture/">TopHat</a>
+			<a href="https://drive.google.com/drive/folders/1AsHhIFfQ3yNE_m2z4wswRfKh77K0UH9w">Course Google Drive</a>
+			<a href="https://www.w3schools.com/">W3Schools</a>
+    </div>
+  </div>
+  <div class="dropdown">
+    <button class="dropbtn">Search
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+			<a href="fromfile.html">From File</a>
+			<a href="googleapi.html">Google API</a>
+    </div>
+  </div>
+    <div class="dropdown">
+    <button class="dropbtn">About
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+			<a href="developer.html">Developers</a>
+			<a href="contactus.html">Contact Us</a>
+    </div>
+  </div>
+  <div class="dropdown">
+    <button class="dropbtn">Browser
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+			<a href="navigator.html">Navigator</a>
+			<a href="window.html">Window</a>
+			<a href="screen.html">Screen</a>
+			<a href="location.html">Location</a>
+			<a href="geolocation.html">Geolocation</a>
+    </div>
+  </div>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">&#9776;</a>
+</div> 
+
+<div style="padding-left:16px">
+	<h2>Cowabunga</h2>
+</div>
+
+<script>
+function myFunction() {
+  var x = document.getElementById("myTopnav");
+  if (x.className === "topnav") {
+    x.className += " responsive";
+  } else {
+    x.className = "topnav";
+  }
+}
+</script>
+
+</body>
+</html>

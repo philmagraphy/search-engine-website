@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+
+<!--code modified from https://www.w3schools.com/howto/howto_js_topnav_responsive.asp-->
+
+<html>
+<head>
+	<title> Search From File </title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="styles.css" type="text/css">
+</head>
+
+<body>
+
+ <div class="topnav" id="myTopnav">
+  <a href="index.html">Home</a>
+    <div class="dropdown">
+    <button class="dropbtn">Course
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+			<a href="https://learn.zybooks.com/zybook/CUNYCSCI355TeitelmanFall2019">Zybook</a>
+			<a href="https://app.tophat.com/e/817742/lecture/">TopHat</a>
+			<a href="https://drive.google.com/drive/folders/1AsHhIFfQ3yNE_m2z4wswRfKh77K0UH9w">Course Google Drive</a>
+			<a href="https://www.w3schools.com/">W3Schools</a>
+    </div>
+  </div>
+  <div class="dropdown">
+    <button class="dropbtn-active">Search
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+			<a href="fromfile.html" class="active">From File</a>
+			<a href="googleapi.html">Google API</a>
+    </div>
+  </div>
+    <div class="dropdown">
+    <button class="dropbtn">About
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+			<a href="developer.html">Developers</a>
+			<a href="contactus.html">Contact Us</a>
+    </div>
+  </div>
+  <div class="dropdown">
+    <button class="dropbtn">Browser
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+			<a href="navigator.html" >Navigator</a>
+			<a href="window.html">Window</a>
+			<a href="screen.html">Screen</a>
+			<a href="location.html">Location</a>
+			<a href="geolocation.html">Geolocation</a>
+    </div>
+  </div>
+  <a href="javascript:void(0);" class="icon" onclick="myFunction()">&#9776;</a>
+</div>  
+
+<div style="padding-left:10px; padding-top:10px; padding-bottom:10px;"> 
+<input id="fileInput" class="filebtn" type="file" accept="application/json, text/xml, text/csv" style="display:none;">
+<input type="button" value="Upload File" onclick="document.getElementById('fileInput').click();"/>
+<input type="button" value="Download File" onclick="writeFile()" >
+	<select id="downloadfiletype">
+		<option value="csv">CSV</option>
+		<option value="xml">XML</option>
+		<option value="json">JSON</option>
+	</select> 
+  <button type="button" onclick="selectAll()">Select All</button>
+  <button type="button" onclick="deselectAll()">Deselect All</button>
+</div>
+<div class="save">
+<a style="display: none; width: fit-content; padding-left:10px; padding-bottom:10px;" href="" id="a" download>Download file</a>
+</div>
+
+<div id="results" style="padding-left:16px">
+</div>
+
+<script>
+// parse and display results
+window.onload = function() {
+    var fileInput = document.getElementById('fileInput');
+    var fileDisplayArea = document.getElementById('results');
+    fileInput.addEventListener('change', function(e) {
+	var file = fileInput.files[0];
+	var reader = new FileReader();
+
+	reader.onload = function(e) {
+	    var extension = fileInput.value.split(".")[1];
+	    var fileText = reader.result;
+	    if (extension === "xml"){
+		var parser = new DOMParser();
+		var doc = parser.parseFromString(fileText, "text/xml");
+		var results = doc.getElementsByTagName("result");
+		for (var i = 0; i < results.length; i++) {
+		    var container = document.createElement("div");
+		    container.className = "result";
+		    var checkb = document.createElement("input");
+		    checkb.type = "checkbox";
+			
+		    var link = document.createElement("p");
+		    link.className = "title";
+		    link.innerHTML = doc.getElementsByTagName("title")[i].textContent;
+			
+		    var url = document.createElement("a");
+		    url.href = doc.getElementsByTagName("url")[i].textContent;
+		    url.innerHTML = doc.getElementsByTagName("url")[i].textContent;
+			
+		    var desc = document.createElement("p");
+		    desc.className = "desc";
+		    desc.innerHTML = doc.getElementsByTagName("description")[i].textContent;
+		    var br = document.createElement("br");
+		    container.appendChild(checkb);
+		    container.appendChild(link);
+		    container.appendChild(url);
+		    container.appendChild(desc);
+		    container.appendChild(br);
+		    fileDisplayArea.appendChild(container);
+		}
+	    }
+	    else if (extension === "json") {
+		let obj = JSON.parse(fileText);
+		let results = obj.Result;
+		for (var i = 0; i < results.length; i++) {
+		    var container = document.createElement("div");
+		    container.className = "result";
+		    var checkb = document.createElement("input");
+		    checkb.type = "checkbox";
+			
+		    var link = document.createElement("p");
+			link.className = "title";
+		    link.innerHTML = results[i].title;
+
+		    var url = document.createElement("a");
+		    url.href = results[i].url;
+		    url.innerHTML = results[i].url;
+			
+		    var desc = document.createElement("p");
+		    desc.className = "desc";
+		    desc.innerHTML = results[i].description;
+		    var br = document.createElement("br");
+		    container.appendChild(checkb);
+		    container.appendChild(link);
+		    container.appendChild(url);
+		    container.appendChild(desc);
+		    container.appendChild(br);
+		    fileDisplayArea.appendChild(container);
+		}
+	    }
+	    else if (extension === "csv") {
+		var content = fileText.split('\n');
+		for (var i = 0; i < content.length; i++) {
+			if(content[i].length == 0) continue;
+			else {
+		    var elements = content[i].split(',');
+		    var container = document.createElement("div");
+                    container.className = "result";
+                    var checkb = document.createElement("input");
+                    checkb.type = "checkbox";
+					
+                    var link = document.createElement("p");
+					link.className = "title";
+                    link.innerHTML = elements[0].replace(/\"/g, "");
+                    var url = document.createElement("a");
+					url.href = elements[1];
+                    url.innerHTML = elements[1].replace(/\"/g, "");
+					
+                    var desc = document.createElement("p");
+                    desc.className = "desc";
+                    desc.innerHTML = elements[2].replace(/\"/g, "");
+                    var br = document.createElement("br");
+                    container.appendChild(checkb);
+                    container.appendChild(link);
+                    container.appendChild(url);
+                    container.appendChild(desc);
+                    container.appendChild(br);
+                    fileDisplayArea.appendChild(container);
+			}
+		}
+	    }
+	}
+	
+	reader.readAsText(file); 
+    });
+}
+
+// download results
+function writeFile() {
+	var type = document.getElementById("downloadfiletype");
+	var extension = type.value.toLowerCase();
+	if(extension == "csv") writeCSV();
+	else if(extension == "json") writeJSON();
+	else if(extension == "xml") writeXML();
+}
+
+function writeJSON() {
+    var resultsObject = {"Result" : []};
+    var name = prompt("Please name your file (without extension): ");
+    name = name + ".json";
+    var results = document.getElementById("results");
+    var indRes = results.children;
+    for (var i = 0; i < indRes.length; i++) {
+	if (indRes[i].children[0].checked) {
+	    var title = indRes[i].children[1].innerHTML;
+	    var url =   indRes[i].children[2].innerHTML;
+	    var description = indRes[i].children[3].innerHTML;
+	    var result = {"title": title, "url":url, "description":description};
+	    resultsObject["Result"].push(result);
+	}
+    }
+    download(JSON.stringify(resultsObject), name, 'text/plain');
+}
+
+function writeCSV() {
+    var name = prompt("Please name your file (without extension): ");
+    name = name + ".csv";
+    var results = document.getElementById("results");
+    var indRes = results.children;
+    var result = "";
+    for (var i = 0; i < indRes.length; i++) {
+        if (indRes[i].children[0].checked) {
+            var title = indRes[i].children[1].innerHTML;
+	    title = title.replace(',','');
+            var url =   indRes[i].children[2].innerHTML;
+	    url = url.replace(',','');
+            var description = indRes[i].children[3].innerHTML;
+	    description = description.replace(',','');
+	    var result = result + title + "," + url + "," + description+"\n";
+        }
+    }
+    result = result.trim();
+    download(result, name, 'text/plain');
+}
+
+function writeXML() {
+    var name = prompt("Please name your file (without extension): ");
+    name = name + ".xml";
+    var results = document.getElementById("results");
+    var indRes = results.children;
+    var result = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<results>\n";
+    for (var i = 0; i < indRes.length; i++) {
+        if (indRes[i].children[0].checked) {
+            var title = indRes[i].children[1].innerHTML;
+            title = title.replace(',','');
+            var url =   indRes[i].children[2].innerHTML;
+            url = url.replace(',','');
+            var description = indRes[i].children[3].innerHTML;
+            description = description.replace(',','');
+            var result = result + "<result>\n<title>" + title + "</title>\n"
+            + "<url>" + url + "</url>\n" + "<description>" 
+            + description + "</description>\n</result>\n";
+        }
+    }
+    result += "</results>";
+    download(result, name, 'text/plain');
+}
+
+function download(text, name, type) {
+    var a = document.getElementById("a");
+    a.style.display = "block";
+    var file = new Blob([text], {type: type});
+    a.href = URL.createObjectURL(file);
+    a.download = name;
+}
+
+// select deselect
+function selectAll() {
+    var results = document.getElementById("results");
+    var indivResults = results.children;
+    for (var i = 0; i < indivResults.length; i++) {
+	indivResults[i].children[0].checked = true;
+    }
+}
+
+function deselectAll() {
+    var results = document.getElementById("results");
+    var indivResults = results.children;
+    for (var i = 0; i < indivResults.length; i++) {
+        indivResults[i].children[0].checked = false;
+    }
+}
+
+</script>
+
+</body>
+</html>
